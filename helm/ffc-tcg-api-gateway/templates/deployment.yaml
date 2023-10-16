@@ -1,0 +1,8 @@
+{{- include "ffc-helm-library.deployment" (list . "ffc-tcg-api-gateway.deployment") -}}
+{{- define "ffc-tcg-api-gateway.deployment" -}}
+spec:
+  template:
+    spec:
+      containers:
+      - {{ include "ffc-helm-library.container" (list . "ffc-tcg-api-gateway.container") }}
+{{- end -}}

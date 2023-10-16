@@ -1,10 +1,10 @@
 services:
-  ffc-template-node:
+  ffc-tcg-api-gateway:
     build:
       context: .
       target: production
-    image: ffc-template-node
-    container_name: ffc-template-node
+    image: ffc-tcg-api-gateway
+    container_name: ffc-tcg-api-gateway
     environment:
-      APPINSIGHTS_CLOUDROLE: ffc-template-node-local
+      APPINSIGHTS_CLOUDROLE: ffc-tcg-api-gateway-local
       APPINSIGHTS_CONNECTIONSTRING: ${APPINSIGHTS_CONNECTIONSTRING}

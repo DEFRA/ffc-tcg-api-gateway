@@ -2,11 +2,11 @@
 # to provide dependencies and expose ports for local testing
 
 services:
-  ffc-template-node:
+  ffc-tcg-api-gateway:
     build:
       target: development
-    image: ffc-template-node-development
-    container_name: ffc-template-node-development
+    image: ffc-tcg-api-gateway-development
+    container_name: ffc-tcg-api-gateway-development
     ports:
       - "3000:3000"
       - "9229:9229"
