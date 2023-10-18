@@ -1,15 +1,27 @@
 require('./insights').setup()
 const Hapi = require('@hapi/hapi')
+const AuthBearer = require('hapi-auth-bearer-token')
 
-const server = Hapi.server({
-  port: process.env.PORT
-})
+const createServer = async () => {
+  const server = Hapi.server({
+    port: process.env.PORT,
+    routes: {
+      validate: {
+        options: {
+          abortEarly: false
+        }
+      }
+    },
+    router: {
+      stripTrailingSlash: true
+    }
+  })
 
-const routes = [].concat(
-  require('./routes/healthy'),
-  require('./routes/healthz')
-)
+  await server.register(AuthBearer)
+  await server.register(require('./plugins/auth'))
+  await server.register(require('./plugins/router'))
 
-server.route(routes)
+  return server
+}
 
-module.exports = server
+module.exports = { createServer }
