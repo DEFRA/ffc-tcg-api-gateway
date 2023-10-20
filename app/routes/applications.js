@@ -1,8 +1,9 @@
 const Wreck = require('@hapi/wreck')
 const { BASE_URL } = require('../constants/base-url')
-const { WITHDRAW } = require('../constants/abaco-transitions')
+const { withdraw } = require('../constants/abaco-transitions')
+const transitionsTable = require('../constants/abaco-transitions')
 const { WRECK_OPTIONS } = require('../constants/wreck-options')
-const { GET, POST } = require('../constants/http-verbs')
+const { GET, POST, PATCH } = require('../constants/http-verbs')
 const { USER } = require('../constants/scopes')
 
 module.exports = [{
@@ -47,17 +48,39 @@ module.exports = [{
    * close an application
    * @param {string} applicationId - unique ID for the application
    * @param {object} notes required, set to null if no value
-   * @return {object} object containing the applicationId and applicationCode
+   * @return {object} the last transition log
    */
-  method: POST,
+  method: PATCH,
   path: '/applications/close/{applicationId}',
   options: { auth: { strategy: 'simple', scope: [USER] } },
   handler: async (request, h) => {
     const payload = {
       notes: null
     }
-    const application = await Wreck.post(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/progress/${WITHDRAW}`, WRECK_OPTIONS(request, payload))
-    return h.response({ ...application.payload }).code(200)
+    await Wreck.patch(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/progress/${withdraw}`, WRECK_OPTIONS(request, payload))
+    const applicationStatus = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/is-in-transition`, WRECK_OPTIONS(request))
+    return h.response({ ...applicationStatus.payload }).code(200)
+  }
+},
+{
+  /**
+   * Transition an application to another state
+   * @param {string} applicationId - unique ID for the application
+   * @param {string} destination - section the application should be moved to
+   * @param {object} notes required, set to null if no value
+   * @return {object} the last transition log
+   */
+  method: PATCH,
+  path: '/applications/transition/{applicationId}/{destination}',
+  options: { auth: { strategy: 'simple', scope: [USER] } },
+  handler: async (request, h) => {
+    const payload = {
+      notes: null
+    }
+    const destinationId = transitionsTable[request.params.destination] // map the destinations to the Abaco Node IDs
+    await Wreck.patch(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/progress/${destinationId}`, WRECK_OPTIONS(request, payload))
+    const applicationStatus = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/is-in-transition`, WRECK_OPTIONS(request))
+    return h.response({ ...applicationStatus.payload }).code(200)
   }
 },
 {

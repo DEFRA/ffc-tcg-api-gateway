@@ -1,3 +1,4 @@
 module.exports = {
-  WITHDRAW: '465'
+  withdraw: '465',
+  eligibility: '463'
 }
