@@ -29,7 +29,7 @@ module.exports = [{
   /**
    * Returns transition status of an application
    * @param {string} applicationId - unique ID of the application
-   * @return {object} object containing transition status last transition details and available transitions
+   * @return {object} object containing transition status, last transition details, available transitions and form status
    */
   method: GET,
   path: '/applications/status/{applicationId}',
@@ -37,9 +37,11 @@ module.exports = [{
   handler: async (request, h) => {
     const applicationStatus = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/is-in-transition`, WRECK_OPTIONS(request))
     const availableTransitions = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/transitions`, WRECK_OPTIONS(request))
+    const status = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}`, WRECK_OPTIONS(request))
     return h.response({
       ...applicationStatus.payload,
-      availableTransitions: availableTransitions.payload
+      availableTransitions: availableTransitions.payload,
+      status: status.payload
     }).code(200)
   }
 },

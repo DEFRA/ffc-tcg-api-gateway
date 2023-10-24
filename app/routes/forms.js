@@ -1,7 +1,7 @@
 const Wreck = require('@hapi/wreck')
 const { BASE_URL } = require('../constants/base-url')
 const { WRECK_OPTIONS } = require('../constants/wreck-options')
-const { GET } = require('../constants/http-verbs')
+const { GET, POST } = require('../constants/http-verbs')
 const { USER } = require('../constants/scopes')
 
 module.exports = [{
@@ -21,4 +21,31 @@ module.exports = [{
       formContent: form.payload.documentDefinition
     }).code(200)
   }
-}]
+},
+{
+/**
+ * Submit a form with user data
+ *
+ * @return {object} the updated form data
+ */
+  method: POST,
+  path: '/forms/submit/{formType}/{applicationId}',
+  options: { auth: { strategy: 'simple', scope: [USER] } },
+  handler: async (request, h) => {
+    const payload = {
+      document: {
+        fields:
+          { IS_LAND_UPTODATE: 'N' },
+        validFrom: '2022-10-11T00:00:00Z',
+        validTo: '9999-12-15T00:00:00Z'
+      }
+    }
+    const availableForms = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}`, WRECK_OPTIONS(request))
+    const formData = availableForms.payload.forms.find(form => form.formDetails.params.document_code === request.params.formType)
+    const submitForm = await Wreck.post(`${BASE_URL}/application-forms/master/api-priv/v1/applications/${request.params.applicationId}/declarations/${request.params.formType}?formConfigId=${formData.formDetails.formConfigId}&compileStatusIdentifier=${formData.formDetails.compileStatusIdentifier}&compileStatus=COMPLETED`, WRECK_OPTIONS(request, payload))
+    return h.response({
+      ...submitForm.payload
+    }).code(200)
+  }
+}
+]
