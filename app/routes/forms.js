@@ -34,8 +34,7 @@ module.exports = [{
   handler: async (request, h) => {
     const payload = {
       document: {
-        fields:
-          { IS_LAND_UPTODATE: 'N' },
+        fields: { ...request.payload },
         validFrom: '2022-10-11T00:00:00Z',
         validTo: '9999-12-15T00:00:00Z'
       }
