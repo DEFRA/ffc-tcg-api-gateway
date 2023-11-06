@@ -1,10 +1,10 @@
 const Wreck = require('@hapi/wreck')
 const { BASE_URL } = require('../constants/base-url')
 const { withdraw } = require('../constants/abaco-transitions')
-const transitionsTable = require('../constants/abaco-transitions')
 const { WRECK_OPTIONS } = require('../constants/wreck-options')
 const { GET, POST, PATCH } = require('../constants/http-verbs')
 const { USER } = require('../constants/scopes')
+const { formatAvailableForms } = require('../processing/format-available-forms')
 
 module.exports = [{
 /**
@@ -38,6 +38,9 @@ module.exports = [{
     const applicationStatus = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/is-in-transition`, WRECK_OPTIONS(request))
     const availableTransitions = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/transitions`, WRECK_OPTIONS(request))
     const status = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}`, WRECK_OPTIONS(request))
+    const forms = formatAvailableForms(status.payload.forms)
+    // create additional sections and add to formGroup eg review and Submit
+    status.payload.forms = forms
     return h.response({
       ...applicationStatus.payload,
       availableTransitions: availableTransitions.payload,
@@ -79,8 +82,7 @@ module.exports = [{
     const payload = {
       notes: null
     }
-    const destinationId = transitionsTable[request.params.destination] // map the destinations to the Abaco Node IDs
-    await Wreck.patch(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/progress/${destinationId}`, WRECK_OPTIONS(request, payload))
+    await Wreck.patch(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/progress/${request.params.destination}`, WRECK_OPTIONS(request, payload))
     const applicationStatus = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/is-in-transition`, WRECK_OPTIONS(request))
     return h.response({ ...applicationStatus.payload }).code(200)
   }
