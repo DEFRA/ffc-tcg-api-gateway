@@ -1,10 +1,10 @@
 const Wreck = require('@hapi/wreck')
 const { BASE_URL } = require('../constants/base-url')
-const { withdraw } = require('../constants/abaco-transitions')
 const { WRECK_OPTIONS } = require('../constants/wreck-options')
 const { GET, POST, PATCH } = require('../constants/http-verbs')
 const { USER } = require('../constants/scopes')
 const { formatAvailableForms } = require('../processing/format-available-forms')
+const withdraw = ''
 
 module.exports = [{
 /**
@@ -62,6 +62,7 @@ module.exports = [{
     const payload = {
       notes: null
     }
+    // needs to use the transition module to get correct transition id
     await Wreck.patch(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/progress/${withdraw}`, WRECK_OPTIONS(request, payload))
     const applicationStatus = await Wreck.get(`${BASE_URL}/applications/master/api-priv/v1/applications/${request.params.applicationId}/is-in-transition`, WRECK_OPTIONS(request))
     return h.response({ ...applicationStatus.payload }).code(200)
