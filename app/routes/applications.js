@@ -50,6 +50,30 @@ module.exports = [{
 },
 {
   /**
+   * Returns transition status of an application
+   * @param {string} applicationId - unique ID of the application
+   * @return {object} object containing transition status, last transition details, available transitions and form status
+   */
+  method: GET,
+  path: '/applications/review/{partyId}/{applicationId}',
+  options: { auth: { strategy: 'simple', scope: [USER] } },
+  handler: async (request, h) => {
+    const partyDetails = await Wreck.get(`http://ffc-tcg-api-gateway:3004/parties/${request.params.partyId}`, WRECK_OPTIONS(request))
+    const actions = await Wreck.get(`http://ffc-tcg-api-gateway:3004/actions/${request.params.applicationId}`, WRECK_OPTIONS(request))
+    const selectedActions = actions.payload.filter(action => action.value === true).map(selectedActions => selectedActions.prizeTitle)
+    return h.response({
+      organisation: {
+        businessName: partyDetails.payload.lastName,
+        sbi: partyDetails.payload.id
+      },
+      funding: {
+        options: selectedActions
+      }
+    }).code(200)
+  }
+},
+{
+  /**
    * close an application
    * @param {string} applicationId - unique ID for the application
    * @param {object} notes required, set to null if no value
