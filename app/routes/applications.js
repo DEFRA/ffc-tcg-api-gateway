@@ -4,6 +4,7 @@ const { WRECK_OPTIONS } = require('../constants/wreck-options')
 const { GET, POST, PATCH } = require('../constants/http-verbs')
 const { USER } = require('../constants/scopes')
 const { formatAvailableForms } = require('../processing/format-available-forms')
+const { getSelectedActions } = require('../processing/get-selected-actions')
 const withdraw = ''
 
 module.exports = [{
@@ -59,16 +60,13 @@ module.exports = [{
   options: { auth: { strategy: 'simple', scope: [USER] } },
   handler: async (request, h) => {
     const partyDetails = await Wreck.get(`http://ffc-tcg-api-gateway:3004/parties/${request.params.partyId}`, WRECK_OPTIONS(request))
-    const actions = await Wreck.get(`http://ffc-tcg-api-gateway:3004/actions/${request.params.applicationId}`, WRECK_OPTIONS(request))
-    const selectedActions = actions.payload.filter(action => action.value === true).map(selectedActions => selectedActions.prizeTitle)
+    const selectedActions = await getSelectedActions(request)
     return h.response({
       organisation: {
         businessName: partyDetails.payload.lastName,
         sbi: partyDetails.payload.id
       },
-      funding: {
-        options: selectedActions
-      }
+      fundingOptions: selectedActions
     }).code(200)
   }
 },
