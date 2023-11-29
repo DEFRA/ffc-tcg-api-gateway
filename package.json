@@ -1,6 +1,6 @@
 {
   "name": "ffc-tcg-api-gateway",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Scheme admin abstraction",
   "homepage": "https://github.com/DEFRA/ffc-tcg-api-gateway",
   "main": "app/index.js",

@@ -26,6 +26,7 @@ container:
   limitMemory: 100Mi
   limitCpu: 100m
   port: 3004
+  abacoEndpoint: http://api-gateway.ffc-iacs:10000
 
 livenessProbe:
   path: /healthz

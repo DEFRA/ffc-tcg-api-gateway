@@ -15,17 +15,9 @@ module.exports = [
     path: '/parties/{partyId}',
     options: { auth: { strategy: 'simple', scope: [USER] } },
     handler: async (request, h) => {
-      try {
-        console.log(`Routing to: ${BASE_URL}/party-registry/master/api-priv/v1/parties/${request.params.partyId}`)
-        console.log(`Wreck options: ${JSON.stringify(WRECK_OPTIONS(request))}`)
-        const partyDetails = await Wreck.get(`${BASE_URL}/party-registry/master/api-priv/v1/parties/${request.params.partyId}`, WRECK_OPTIONS(request))
-        return h.response({
-          ...partyDetails.payload
-        }).code(200)
-      } catch (error) {
-        return h.response({
-          ...error
-        }).code(500)
-      }
+      const partyDetails = await Wreck.get(`${BASE_URL}/party-registry/master/api-priv/v1/parties/${request.params.partyId}`, WRECK_OPTIONS(request))
+      return h.response({
+        ...partyDetails.payload
+      }).code(200)
     }
   }]
