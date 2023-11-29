@@ -4,4 +4,7 @@ data:
   NODE_ENV: {{ quote .Values.environment }}
   PORT: {{ quote .Values.container.port }}
   APPINSIGHTS_CLOUDROLE: {{ quote .Values.name }}
+  {{- if (eq (.Values.environmentCode | toString ) "snd") }}
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"
+  {{- end }}
 {{- end -}}
