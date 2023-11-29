@@ -20,6 +20,7 @@ const createServer = async () => {
   await server.register(AuthBearer)
   await server.register(require('./plugins/auth'))
   await server.register(require('./plugins/router'))
+  await server.register(require('./plugins/logging'))
 
   return server
 }
