@@ -59,7 +59,7 @@ module.exports = [{
   path: '/applications/review/{partyId}/{applicationId}',
   options: { auth: { strategy: 'simple', scope: [USER] } },
   handler: async (request, h) => {
-    const partyDetails = await Wreck.get(`http://ffc-tcg-api-gateway:3004/parties/${request.params.partyId}`, WRECK_OPTIONS(request))
+    const partyDetails = await Wreck.get(`${BASE_URL}/parties/${request.params.partyId}`, WRECK_OPTIONS(request))
     const selectedActions = await getSelectedActions(request)
     return h.response({
       organisation: {
