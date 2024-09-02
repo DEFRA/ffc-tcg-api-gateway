@@ -22,7 +22,7 @@
     "applicationinsights": "2.8.0",
     "hapi-auth-bearer-token": "8.0.0",
     "hapi-pino": "12.1.0",
-    "jsonwebtoken": "9.0.1"
+    "jsonwebtoken": "9.0.2"
   },
   "devDependencies": {
     "jest": "29.7.0",
