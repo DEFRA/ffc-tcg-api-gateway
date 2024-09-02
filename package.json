@@ -17,7 +17,7 @@
   "contributors": [],
   "license": "OGL-UK-3.0",
   "dependencies": {
-    "@hapi/hapi": "21.3.2",
+    "@hapi/hapi": "21.3.10",
     "@hapi/wreck": "18.0.1",
     "applicationinsights": "2.8.0",
     "hapi-auth-bearer-token": "8.0.0",
